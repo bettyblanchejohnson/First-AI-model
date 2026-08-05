@@ -60,12 +60,16 @@
       }
 
       .controls {
-        display: flex;
-        justify-content: center;
+        position: relative;
+        min-height: 72px;
         margin-bottom: 24px;
       }
 
       button {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
         border: none;
         border-radius: 999px;
         padding: 12px 24px;
@@ -74,7 +78,7 @@
         color: white;
         background: #d198a3;
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, left 0.25s ease, top 0.25s ease;
         box-shadow: 0 10px 20px rgba(209, 152, 163, 0.2);
       }
 
@@ -102,7 +106,7 @@
       <h1>Teachable Machine Image Model</h1>
       <p class="subtitle">Launch the camera and let the classifier analyze the scene in real time.</p>
       <div class="controls">
-        <button type="button" onclick="init()">Start Classifier</button>
+        <button id="start-button" type="button" onclick="init()">Start Classifier</button>
       </div>
       <div id="webcam-container"></div>
       <div id="label-container"></div>
@@ -111,6 +115,29 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 <script type="text/javascript">
+    const controls = document.querySelector('.controls');
+    const startButton = document.getElementById('start-button');
+
+    function moveButtonAway(event) {
+        const controlsRect = controls.getBoundingClientRect();
+        const buttonRect = startButton.getBoundingClientRect();
+        const distanceX = event.clientX - (buttonRect.left + buttonRect.width / 2);
+        const distanceY = event.clientY - (buttonRect.top + buttonRect.height / 2);
+        const distance = Math.hypot(distanceX, distanceY);
+
+        if (distance < 180) {
+            const maxLeft = Math.max(0, controlsRect.width - buttonRect.width - 20);
+            const maxTop = Math.max(0, controlsRect.height - buttonRect.height - 20);
+            const newLeft = Math.random() * maxLeft;
+            const newTop = Math.random() * maxTop;
+
+            startButton.style.left = `${newLeft}px`;
+            startButton.style.top = `${newTop}px`;
+        }
+    }
+
+    controls.addEventListener('mousemove', moveButtonAway);
+    controls.addEventListener('mouseenter', moveButtonAway);
     // More API functions here:
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
